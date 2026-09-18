@@ -13,3 +13,22 @@ document.querySelectorAll(".copy-button").forEach(button=>{
     }
   });
 });
+
+document.querySelectorAll(".copy-value").forEach(button=>{
+  button.addEventListener("click",async()=>{
+    const value=button.dataset.copy;
+    try{
+      await navigator.clipboard.writeText(value);
+      button.classList.add("is-copied");
+      const old=button.textContent;
+      button.textContent="Copied ✓";
+      setTimeout(()=>{
+        button.textContent=old;
+        button.classList.remove("is-copied");
+      },1400);
+    }catch{
+      button.textContent="Select and copy";
+      setTimeout(()=>button.textContent=value,1400);
+    }
+  });
+});

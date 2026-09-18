@@ -6,3 +6,61 @@
 .contact-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .contact-link{color:#67e8f9;text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:12px}
 .contact-link:hover{color:#fff}
+
+.contact-value{border:0;background:transparent;color:#cbd5e1;font:14px "JetBrains Mono",monospace;padding:0;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.contact-value:hover{color:#67e8f9}
+.copy-value.is-copied{color:#67e8f9}
+
+/* Flowing light is clipped inside the heading glyphs. */
+.flow-text{
+  color:transparent;
+  -webkit-background-clip:text;
+  background-clip:text;
+  background-image:
+    linear-gradient(
+      115deg,
+      #ffffff 0%,
+      #ffffff 18%,
+      #8b5cf6 36%,
+      #67e8f9 50%,
+      #8b5cf6 64%,
+      #ffffff 82%,
+      #ffffff 100%
+    );
+  background-size:260% 100%;
+  animation:text-flow 8s ease-in-out infinite;
+  text-shadow:0 0 24px rgba(139,92,246,.12);
+}
+.flow-text-accent{
+  background-image:
+    linear-gradient(
+      115deg,
+      #a78bfa 0%,
+      #c4b5fd 18%,
+      #67e8f9 42%,
+      #a78bfa 62%,
+      #e0e7ff 82%,
+      #a78bfa 100%
+    );
+}
+.flow-text-cyan{
+  background-image:
+    linear-gradient(
+      115deg,
+      #67e8f9 0%,
+      #ffffff 24%,
+      #22d3ee 45%,
+      #8b5cf6 66%,
+      #67e8f9 86%,
+      #ffffff 100%
+    );
+  background-size:300% 100%;
+}
+@keyframes text-flow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@media (prefers-reduced-motion:reduce){
+  .flow-text{animation:none;background-position:50% 50%}
+}
