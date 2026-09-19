@@ -1,31 +1,52 @@
-const canvas=document.getElementById("background");const ctx=canvas.getContext("2d");let w,h,t=0;const dots=Array.from({length:55},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.8+.3,s:Math.random()*.0005+.0002}));function resize(){w=canvas.width=innerWidth*devicePixelRatio;h=canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);w=innerWidth;h=innerHeight}addEventListener("resize",resize);resize();function draw(){t+=.004;ctx.clearRect(0,0,w,h);const g=ctx.createRadialGradient(w*.75,h*.2,0,w*.75,h*.2,w*.65);g.addColorStop(0,"#17133b");g.addColorStop(1,"#050711");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);ctx.beginPath();for(let x=0;x<w;x+=8){const y=h*.5+Math.sin(x*.008+t)*9+Math.sin(x*.002-t)*5;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.6;ctx.shadowBlur=10;ctx.shadowColor="rgba(255,255,255,.55)";ctx.stroke();ctx.shadowBlur=0;for(let i=0;i<4;i++){ctx.beginPath();for(let x=-30;x<=w+30;x+=8){const y=h*(.25+i*.19)+Math.sin(x*.006+t+i)*35+Math.sin(x*.002-t*1.4)*25+i*4;x===-30?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.strokeStyle=i%2?"rgba(103,232,249,.12)":"rgba(167,139,250,.16)";ctx.lineWidth=1.2;ctx.stroke()}dots.forEach(d=>{d.y-=d.s;if(d.y<0)d.y=1;ctx.beginPath();ctx.arc(d.x*w,d.y*h,d.r,0,Math.PI*2);ctx.fillStyle="rgba(103,232,249,.55)";ctx.fill()});requestAnimationFrame(draw)}draw();
-document.querySelectorAll(".copy-button").forEach(button=>{
-  button.addEventListener("click",async()=>{
-    const value=button.dataset.copy;
-    try{
-      await navigator.clipboard.writeText(value);
-      const old=button.textContent;
-      button.textContent="Copied";
-      setTimeout(()=>button.textContent=old,1400);
-    }catch{
-      button.textContent="Copy manually";
-      setTimeout(()=>button.textContent="Copy",1400);
+const canvas=document.getElementById("background");
+const ctx=canvas.getContext("2d");
+let w,h,t=0;
+const dots=Array.from({length:55},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.8+.3,s:Math.random()*.0005+.0002}));
+function resize(){w=canvas.width=innerWidth*devicePixelRatio;h=canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);w=innerWidth;h=innerHeight}
+addEventListener("resize",resize);resize();
+
+function draw(){
+  t+=.004;
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createRadialGradient(w*.75,h*.2,0,w*.75,h*.2,w*.65);
+  g.addColorStop(0,"#17133b");g.addColorStop(1,"#050711");
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+
+  ctx.beginPath();
+  for(let x=0;x<w;x+=8){
+    const y=h*.5+Math.sin(x*.008+t)*9+Math.sin(x*.002-t)*5;
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=1.6;ctx.shadowBlur=10;ctx.shadowColor="rgba(255,255,255,.55)";ctx.stroke();ctx.shadowBlur=0;
+
+  for(let i=0;i<4;i++){
+    ctx.beginPath();
+    for(let x=-30;x<=w+30;x+=8){
+      const y=h*(.25+i*.19)+Math.sin(x*.006+t+i)*35+Math.sin(x*.002-t*1.4)*25+i*4;
+      x===-30?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
+    ctx.strokeStyle=i%2?"rgba(103,232,249,.12)":"rgba(167,139,250,.16)";
+    ctx.lineWidth=1.2;ctx.stroke();
+  }
+
+  dots.forEach(d=>{
+    d.y-=d.s;if(d.y<0)d.y=1;
+    ctx.beginPath();ctx.arc(d.x*w,d.y*h,d.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(103,232,249,.55)";ctx.fill();
   });
-});
+  requestAnimationFrame(draw);
+}
+draw();
 
 document.querySelectorAll(".copy-value").forEach(button=>{
   button.addEventListener("click",async()=>{
     const value=button.dataset.copy;
     try{
       await navigator.clipboard.writeText(value);
-      button.classList.add("is-copied");
       const old=button.textContent;
       button.textContent="Copied ✓";
-      setTimeout(()=>{
-        button.textContent=old;
-        button.classList.remove("is-copied");
-      },1400);
+      button.classList.add("is-copied");
+      setTimeout(()=>{button.textContent=old;button.classList.remove("is-copied")},1400);
     }catch{
       button.textContent="Select and copy";
       setTimeout(()=>button.textContent=value,1400);
