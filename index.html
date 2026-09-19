@@ -3,93 +3,132 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050711">
+  <meta name="description" content="Abdul Azeez — DevOps, Cloud & Backend portfolio.">
   <title>Abdul Azeez — DevOps & Cloud</title>
-  <meta name="description" content="Portfolio of Abdul Azeez — DevOps, cloud, backend and automation.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <canvas id="background" aria-hidden="true"></canvas>
+
   <header class="nav">
     <a class="logo" href="#home">AA<span>.</span></a>
     <nav aria-label="Main navigation">
-      <a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a>
-      <a href="#journey">Journey</a><a href="#resume">Resume</a><a href="#contact">Contact</a>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#journey">Journey</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <div class="dot-nav" aria-label="Quick navigation">
-    <a href="#about" data-label="About"></a><a href="#projects" data-label="Projects"></a>
-    <a href="#skills" data-label="Skills"></a><a href="#journey" data-label="Journey"></a>
-    <a href="#contact" data-label="Let’s Talk"></a><a href="#contact" data-label="Hire Me"></a>
+  <div class="dot-nav" aria-label="Section navigation">
+    <a href="#about" data-label="About"></a>
+    <a href="#skills" data-label="Skills"></a>
+    <a href="#projects" data-label="Projects"></a>
+    <a href="#journey" data-label="Journey"></a>
+    <a href="#contact" data-label="Let's Talk"></a>
   </div>
 
   <main>
-    <section id="home" class="hero page">
+    <section id="home" class="page hero">
       <p class="eyebrow">BANGALORE, INDIA / DEVOPS & CLOUD</p>
       <h1><span>ABDUL</span><span class="accent">AZEEZ</span></h1>
-      <h2 class="flow-text flow-text-cyan">DEVOPS</h2>
+      <h2 class="flow-text">DEVOPS</h2>
       <p class="hero-copy">Building reliable systems, automating workflows, and learning by shipping practical projects.</p>
-      <div class="hero-actions"><a class="text-link" href="#contact">Let’s talk <span>↗</span></a><a class="text-link hire-link" href="#contact">Hire me <span>↗</span></a></div>
+      <div class="hero-actions">
+        <a class="text-link" href="#projects">Explore work <span>↘</span></a>
+        <a class="text-link hire-link" href="#contact">Let's talk <span>↗</span></a>
+      </div>
+      <div class="hero-meta">
+        <span>AVAILABLE FOR OPPORTUNITIES</span>
+        <span>OPEN TO REMOTE / IN-OFFICE</span>
+      </div>
     </section>
 
     <section id="about" class="page section">
-      <p class="eyebrow">01 — PROFILE / SYSTEM OVERVIEW</p><h2 class="section-title">ABOUT</h2>
+      <p class="eyebrow">01 — PROFILE / SYSTEM OVERVIEW</p>
+      <h2 class="section-title">ABOUT</h2>
       <h3>ABDUL AZEEZ</h3>
       <div class="terminal">
-        <p>developer.status = "hands-on learner"</p>
-        <p>focus = ["devops", "cloud", "backend", "automation"]</p>
-        <p>location = "Bangalore, Karnataka, India"</p>
-        <br><p class="cyan">&gt; education</p>
+        <p>developer.status = <span>"hands-on learner"</span></p>
+        <p>focus = [<span>"devops"</span>, <span>"cloud"</span>, <span>"backend"</span>, <span>"automation"</span>]</p>
+        <p>location = <span>"Bangalore, Karnataka, India"</span></p>
+        <br>
+        <p class="cyan">&gt; education</p>
         <p>&gt; college: Global Academy of Technology</p>
         <p>&gt; degree: B.E. Information Science and Engineering</p>
-        <p>&gt; location: Bangalore, Karnataka</p>
-        <p>&gt; graduation: 2026</p><p>&gt; cgpa: 7.6</p>
+        <p>&gt; graduation: 2026</p>
+        <p>&gt; cgpa: 7.6</p>
       </div>
     </section>
 
     <section id="skills" class="page section">
-      <p class="eyebrow">02 — TECHNICAL TOOLKIT</p><h2 class="section-title">SKILLS</h2>
+      <p class="eyebrow">02 — TECHNICAL TOOLKIT</p>
+      <h2 class="section-title">SKILLS</h2>
       <p class="sub">BUILDING · AUTOMATING · DEPLOYING</p>
       <div class="grid">
-        <article><h3>DEVOPS</h3><p>Linux / Ubuntu<br>Docker<br>Kubernetes / Minikube<br>CI/CD / GitHub Actions</p></article>
+        <article><h3>DEVOPS</h3><p>Linux / Ubuntu<br>Docker<br>Kubernetes<br>CI/CD · GitHub Actions</p></article>
         <article><h3>BACKEND</h3><p>Node.js<br>Express.js<br>REST APIs<br>Microservices</p></article>
         <article><h3>DATA & MESSAGING</h3><p>MongoDB<br>Redis<br>Kafka</p></article>
-        <article><h3>CLOUD</h3><p>Cloud fundamentals<br>Automation<br>Deployment workflows</p></article>
+        <article><h3>CLOUD</h3><p>AWS fundamentals<br>Deployment workflows<br>Infrastructure & automation</p></article>
       </div>
     </section>
 
     <section id="projects" class="page section">
-      <p class="eyebrow">03 — SELECTED WORK / BUILD LOG</p><h2 class="section-title">PROJECTS</h2>
+      <p class="eyebrow">03 — SELECTED WORK / BUILD LOG</p>
+      <h2 class="section-title">PROJECTS</h2>
       <div class="projects">
-        <article><span class="status">CURRENTLY BUILDING</span><h3>E-commerce Microservices Platform</h3><p>Hands-on microservices work focused on service communication, backend architecture, containers, and deployment workflows.</p><small>Node.js · Express · MongoDB · Redis · Kafka · Docker</small></article>
-        <article><span class="status violet">HANDS-ON PRACTICE</span><h3>CI/CD Pipeline Practice</h3><p>Practical pipeline exercises covering automated workflows, build steps, testing stages, and deployment fundamentals.</p><small>GitHub Actions · Docker · CI/CD · Automation</small></article>
+        <article class="project-card">
+          <div class="card-top"><span class="status">CURRENTLY BUILDING</span><span class="project-index">01</span></div>
+          <h3>E-commerce Microservices Platform</h3>
+          <p>Hands-on microservices work with containerized services, backend APIs, service communication, caching, and event-driven infrastructure.</p>
+          <small>Node.js · Express · MongoDB · Redis · Kafka · Docker Compose</small>
+          <a class="project-link" href="https://github.com/zeez000/ecommerce-platform" target="_blank" rel="noreferrer">View repository ↗</a>
+        </article>
+
+        <article class="project-card">
+          <div class="card-top"><span class="status violet">HANDS-ON PRACTICE</span><span class="project-index">02</span></div>
+          <h3>CI/CD Pipeline Practice</h3>
+          <p>Practical CI/CD exercises focused on automated workflows, build steps, containerization, and deployment fundamentals.</p>
+          <small>GitHub Actions · Docker · Linux · Automation</small>
+          <a class="project-link" href="https://github.com/zeez000/devops-cicd-project" target="_blank" rel="noreferrer">View repository ↗</a>
+        </article>
+
+        <article class="project-card">
+          <div class="card-top"><span class="status muted">PRACTICE / DEVOPS</span><span class="project-index">03</span></div>
+          <h3>DevOps Practice Lab</h3>
+          <p>Linux and DevOps practice work covering command-line workflows, tooling, containers, and foundational automation.</p>
+          <small>Linux · Docker · DevOps · Ubuntu</small>
+          <a class="project-link" href="https://github.com/zeez000/devops" target="_blank" rel="noreferrer">View repository ↗</a>
+        </article>
       </div>
     </section>
 
     <section id="journey" class="page section">
-      <p class="eyebrow">04 — LEARNING PATH / BUILD LOG</p><h2 class="section-title">JOURNEY</h2>
+      <p class="eyebrow">04 — LEARNING PATH / BUILD LOG</p>
+      <h2 class="section-title">JOURNEY</h2>
       <p class="sub">LEARN → BUILD → AUTOMATE → IMPROVE</p>
       <div class="timeline">
         <article><b>FOUNDATION</b><h3>Linux and backend fundamentals</h3><p>Ubuntu, command-line workflows, Node.js, Express, APIs, and databases.</p></article>
         <article><b>CURRENT FOCUS</b><h3>Containers and microservices</h3><p>Docker, service communication, MongoDB, Redis, Kafka, and practical project work.</p></article>
-        <article><b>NEXT DIRECTION</b><h3>Cloud and automation depth</h3><p>Kubernetes, CI/CD workflows, GitHub Actions, deployment practices, and cloud fundamentals.</p></article>
-      </div>
-      <div class="learning">
-        <h3>WORKING ON</h3><p>Active projects and practical implementation.</p>
-        <div class="grid compact"><article>E-commerce Microservices Platform</article><article>CI/CD Pipeline Practice</article></div>
-        <h3>LEARNING</h3><p>Technologies currently being studied and practiced.</p>
-        <div class="grid compact"><article>DevOps & Cloud<br><small>Linux · Docker · Kubernetes · Cloud fundamentals</small></article><article>Backend & Systems<br><small>Node.js · Express · REST APIs · Microservices</small></article><article>Data & Messaging<br><small>MongoDB · Redis · Kafka</small></article></div>
+        <article><b>NEXT DIRECTION</b><h3>Cloud and automation depth</h3><p>Kubernetes, CI/CD workflows, GitHub Actions, AWS fundamentals, and deployment practices.</p></article>
       </div>
     </section>
 
     <section id="resume" class="page section">
-      <p class="eyebrow">05 — PROFILE DOCUMENT</p><h2 class="section-title">RESUME</h2>
+      <p class="eyebrow">05 — PROFILE DOCUMENT</p>
+      <h2 class="section-title">RESUME</h2>
       <div class="resume-box">
-        <h3>Abdul Azeez</h3>
-        <p>DevOps · Cloud · Backend · Automation</p>
-        <p>A focused resume containing profile, technical skills, education, projects, and contact details.</p>
+        <div>
+          <h3>Abdul Azeez</h3>
+          <p>DevOps · Cloud · Backend · Automation</p>
+          <p>Education, technical skills, projects, and contact details in one page.</p>
+        </div>
         <div class="resume-actions">
           <a class="action-button primary" href="abdul-azeez-resume.pdf" download>Download resume ↓</a>
           <a class="action-button" href="abdul-azeez-resume.pdf" target="_blank" rel="noreferrer">View resume ↗</a>
@@ -98,8 +137,11 @@
     </section>
 
     <section id="contact" class="page section contact">
-      <p class="eyebrow">06 — CONNECT / START A CONVERSATION</p><h2 class="section-title">LET’S TALK</h2>
-      <h3>ABDUL AZEEZ</h3><p class="sub">OPEN TO OPPORTUNITIES AND TECHNICAL CONVERSATIONS</p>
+      <p class="eyebrow">06 — CONNECT / START A CONVERSATION</p>
+      <h2 class="section-title">LET'S TALK</h2>
+      <h3>ABDUL AZEEZ</h3>
+      <p class="sub">OPEN TO OPPORTUNITIES AND TECHNICAL CONVERSATIONS</p>
+
       <div class="contact-list">
         <div class="contact-row">
           <span>Email</span>
@@ -111,15 +153,16 @@
         </div>
         <div class="contact-row">
           <span>GitHub</span>
-          <a class="contact-link" href="https://github.com/zeez000" target="_blank" rel="noreferrer" aria-label="Open GitHub">GitHub ↗</a>
+          <a class="contact-link" href="https://github.com/zeez000" target="_blank" rel="noreferrer">github.com/zeez000 ↗</a>
         </div>
         <div class="contact-row">
           <span>LinkedIn</span>
-          <a class="contact-link" href="https://linkedin.com/in/abdul-azeez-046062249" target="_blank" rel="noreferrer" aria-label="Open LinkedIn">LinkedIn ↗</a>
+          <a class="contact-link" href="https://linkedin.com/in/abdul-azeez-046062249" target="_blank" rel="noreferrer">linkedin.com/in/abdul-azeez-046062249 ↗</a>
         </div>
       </div>
     </section>
   </main>
+
   <script src="script.js"></script>
 </body>
 </html>
