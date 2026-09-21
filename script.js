@@ -1,32 +1,143 @@
-const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const canvas=document.getElementById("background");
-const context=canvas.getContext("2d");
-let width=0,height=0,time=0,frameId;
-const pointer={x:.72,y:.18};
-const stars=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.25+.2,depth:Math.random()*.65+.2,phase:Math.random()*Math.PI*2}));
-function resize(){width=window.innerWidth;height=window.innerHeight;const scale=Math.min(window.devicePixelRatio||1,2);canvas.width=width*scale;canvas.height=height*scale;context.setTransform(scale,0,0,scale,0,0)}
-function paintBase(){context.fillStyle="#000000";context.fillRect(0,0,width,height);const aurora=context.createRadialGradient(width*(.22+pointer.x*.18),height*(.16+pointer.y*.08),0,width*.25,height*.18,width*.72);aurora.addColorStop(0,"rgba(86,238,255,.16)");aurora.addColorStop(.42,"rgba(83,129,255,.07)");aurora.addColorStop(1,"rgba(83,129,255,0)");context.fillStyle=aurora;context.fillRect(0,0,width,height)}
-function drawHorizon(){context.save();context.translate(width*.72,height*.55);context.rotate(-.1);for(let i=0;i<16;i++){const radius=90+i*i*18;context.beginPath();context.ellipse(0,0,radius,radius*.29,0,0,Math.PI*2);context.strokeStyle=`rgba(151,145,255,${.15-i*.008})`;context.lineWidth=.8;context.stroke()}context.restore()}
-function drawStars(){stars.forEach(star=>{const shimmer=.25+Math.sin(time*1.4+star.phase)*.22;const x=star.x*width+(pointer.x-.5)*star.depth*18;const y=star.y*height+(pointer.y-.5)*star.depth*12;context.beginPath();context.arc(x,y,star.r,0,Math.PI*2);context.fillStyle=`rgba(213,239,255,${shimmer})`;context.fill()})}
-function drawAurora(){for(let layer=0;layer<3;layer++){context.beginPath();for(let x=-30;x<=width+30;x+=9){const y=height*(.28+layer*.19)+Math.sin(x*.0028+time*.7+layer*2.1)*48+Math.cos(x*.006-time*.55)*22;x===-30?context.moveTo(x,y):context.lineTo(x,y)}context.strokeStyle=layer===1?"rgba(103,232,249,.15)":"rgba(167,139,250,.12)";context.lineWidth=1.2;context.shadowBlur=14;context.shadowColor=layer===1?"rgba(103,232,249,.33)":"rgba(167,139,250,.25)";context.stroke();context.shadowBlur=0}}
-function draw(){time+=.004;context.clearRect(0,0,width,height);paintBase();drawHorizon();drawStars();drawAurora();frameId=requestAnimationFrame(draw)}
-resize();window.addEventListener("resize",resize);window.addEventListener("pointermove",event=>{pointer.x=event.clientX/width;pointer.y=event.clientY/height},{passive:true});if(!reducedMotion)draw();else paintBase();
+(() => {
+  "use strict";
 
-const nav=document.querySelector("[data-nav]");
-const toggle=document.querySelector(".menu-toggle");
-const navLinks=[...document.querySelectorAll(".nav nav a")];
-toggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));toggle.querySelector(".sr-only").textContent=open?"Close navigation":"Open navigation"});
-navLinks.forEach(link=>link.addEventListener("click",()=>{nav.classList.remove("open");toggle.setAttribute("aria-expanded","false");toggle.querySelector(".sr-only").textContent="Open navigation"}));
-const sections=navLinks.map(link=>document.querySelector(link.getAttribute("href"))).filter(Boolean);
-const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){navLinks.forEach(link=>link.classList.toggle("active",link.getAttribute("href")==="#"+entry.target.id))}})},{rootMargin:"-35% 0px -55% 0px",threshold:0});
-sections.forEach(section=>observer.observe(section));
-window.addEventListener("scroll",()=>nav.classList.toggle("scrolled",window.scrollY>25),{passive:true});
-const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");revealObserver.unobserve(entry.target)}}),{threshold:.12});
-document.querySelectorAll(".reveal").forEach(element=>revealObserver.observe(element));
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nav = document.querySelector("[data-nav]");
+  const menuButton = document.querySelector(".menu-toggle");
+  const navLinks = [...document.querySelectorAll("#primary-navigation a")];
+  const progress = document.querySelector(".scroll-progress span");
 
-const toast=document.querySelector(".toast");let toastTimer;
-function showToast(message){toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),1600)}
-document.querySelectorAll(".copy-value").forEach(link=>link.addEventListener("click",async event=>{event.preventDefault();const value=link.dataset.copy;try{await navigator.clipboard.writeText(value);showToast(`${link.dataset.label} copied`)}catch{const area=document.createElement("textarea");area.value=value;area.style.position="fixed";area.style.opacity="0";document.body.append(area);area.select();document.execCommand("copy");area.remove();showToast(`${link.dataset.label} copied`)}}));
-if(!reducedMotion){document.querySelectorAll(".skill-card,.project-card").forEach(card=>{card.addEventListener("pointermove",event=>{const box=card.getBoundingClientRect();const x=(event.clientX-box.left)/box.width;const y=(event.clientY-box.top)/box.height;card.style.setProperty("--pointer-x",`${x*100}%`);card.style.setProperty("--pointer-y",`${y*100}%`);card.style.setProperty("--tilt-x",`${(x-.5)*5}deg`);card.style.setProperty("--tilt-y",`${(0.5-y)*5}deg`)});card.addEventListener("pointerleave",()=>{card.style.setProperty("--tilt-x","0deg");card.style.setProperty("--tilt-y","0deg")})})}
-document.getElementById("year").textContent=new Date().getFullYear();
-window.addEventListener("pagehide",()=>cancelAnimationFrame(frameId));
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  menuButton?.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    menuButton.setAttribute("aria-expanded", String(open));
+  });
+
+  navLinks.forEach(link => link.addEventListener("click", () => {
+    nav.classList.remove("open");
+    menuButton?.setAttribute("aria-expanded", "false");
+  }));
+
+  const updateScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const ratio = max > 0 ? scrollY / max : 0;
+    progress.style.width = `${ratio * 100}%`;
+    nav.classList.toggle("scrolled", scrollY > 24);
+  };
+  addEventListener("scroll", updateScroll, { passive: true });
+  updateScroll();
+
+  const reveals = document.querySelectorAll(".reveal");
+  if (reducedMotion || !("IntersectionObserver" in window)) {
+    reveals.forEach(item => item.classList.add("visible"));
+  } else {
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12 });
+    reveals.forEach(item => revealObserver.observe(item));
+  }
+
+  const sections = [...document.querySelectorAll("main section[id]")];
+  const activateNav = () => {
+    const current = sections.reduce((active, section) =>
+      scrollY >= section.offsetTop - innerHeight * .35 ? section.id : active, "home");
+    navLinks.forEach(link => link.classList.toggle("active", link.hash === `#${current}`));
+  };
+  addEventListener("scroll", activateNav, { passive: true });
+  activateNav();
+
+  const canvas = document.getElementById("network-background");
+  const ctx = canvas.getContext("2d");
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let nodes = [];
+  let animationFrame = 0;
+  const pointer = { x: -1000, y: -1000 };
+
+  const resize = () => {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    width = innerWidth;
+    height = innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const count = Math.max(24, Math.min(68, Math.floor(width * height / 28000)));
+    nodes = Array.from({ length: count }, (_, index) => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - .5) * .16,
+      vy: (Math.random() - .5) * .16,
+      r: index % 7 === 0 ? 1.8 : 1,
+      phase: Math.random()
+    }));
+  };
+
+  const draw = time => {
+    ctx.clearRect(0, 0, width, height);
+    const maxDistance = Math.min(190, width * .18);
+
+    nodes.forEach((node, index) => {
+      if (!reducedMotion) {
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < -20) node.x = width + 20;
+        if (node.x > width + 20) node.x = -20;
+        if (node.y < -20) node.y = height + 20;
+        if (node.y > height + 20) node.y = -20;
+      }
+
+      const pointerDistance = Math.hypot(node.x - pointer.x, node.y - pointer.y);
+      if (pointerDistance < 170 && !reducedMotion) {
+        const force = (170 - pointerDistance) / 170;
+        node.x += (node.x - pointer.x) * force * .006;
+        node.y += (node.y - pointer.y) * force * .006;
+      }
+
+      for (let j = index + 1; j < nodes.length; j++) {
+        const other = nodes[j];
+        const distance = Math.hypot(node.x - other.x, node.y - other.y);
+        if (distance < maxDistance) {
+          const alpha = (1 - distance / maxDistance) * .16;
+          ctx.strokeStyle = `rgba(128, 154, 170, ${alpha})`;
+          ctx.lineWidth = .65;
+          ctx.beginPath();
+          ctx.moveTo(node.x, node.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.stroke();
+
+          if ((index + j) % 17 === 0) {
+            const t = reducedMotion ? node.phase : (time * .00008 + node.phase) % 1;
+            const px = node.x + (other.x - node.x) * t;
+            const py = node.y + (other.y - node.y) * t;
+            ctx.fillStyle = "rgba(92, 225, 255, .75)";
+            ctx.beginPath();
+            ctx.arc(px, py, 1.3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      ctx.fillStyle = node.r > 1 ? "rgba(92, 225, 255, .7)" : "rgba(205, 218, 228, .32)";
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    if (!reducedMotion) animationFrame = requestAnimationFrame(draw);
+  };
+
+  addEventListener("resize", () => { cancelAnimationFrame(animationFrame); resize(); draw(performance.now()); }, { passive: true });
+  addEventListener("pointermove", event => { pointer.x = event.clientX; pointer.y = event.clientY; }, { passive: true });
+  addEventListener("pointerleave", () => { pointer.x = -1000; pointer.y = -1000; }, { passive: true });
+  resize();
+  draw(performance.now());
+})();
