@@ -1,10 +1,11 @@
-"""Verify only scrolling changes; exercise the real CDN-loaded Lenis in Chromium."""
+"""Exercise actual Lenis scrolling and preserve the original design for this PR."""
 import functools
 import hashlib
 import http.server
 import json
 import os
 from pathlib import Path
+import shutil
 import threading
 from playwright.sync_api import sync_playwright
 
@@ -36,9 +37,25 @@ def ready(page):
     page.evaluate('document.fonts.ready')
     page.wait_for_timeout(1000)
 
+def nav_diagnostics(page):
+    return page.evaluate('''() => {
+        const e = document.querySelector('.menu-toggle'), r = e.getBoundingClientRect();
+        const s = getComputedStyle(e), center = document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+        return {width:innerWidth, viewport:visualViewport.width, scale:visualViewport.scale,
+          button:r.toJSON(), header:document.querySelector('[data-nav]').getBoundingClientRect().toJSON(),
+          display:s.display, visibility:s.visibility, opacity:s.opacity, pointerEvents:s.pointerEvents,
+          transform:s.transform, zIndex:s.zIndex, center:center && center.outerHTML, html:e.outerHTML};
+    }''')
+
 def navigate(page, name):
     if page.locator('.menu-toggle').is_visible():
-        page.locator('.menu-toggle').click()
+        try:
+            page.locator('.menu-toggle').click(timeout=5000)
+        except Exception:
+            REPORT['menu_diagnostic'] = nav_diagnostics(page)
+            print('MENU_DIAGNOSTIC', json.dumps(REPORT['menu_diagnostic']), flush=True)
+            page.screenshot(path=str(OUT/'menu-failure.png'))
+            raise
     page.locator('#primary-navigation a[href="#' + name + '"]').click()
     page.wait_for_timeout(1700)
 
@@ -46,6 +63,8 @@ def overflow(page):
     return page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
 
 try:
+    # Limit one-time snapshot checks to this change; future resume edits stay possible.
+    preserve = os.environ.get('VERIFY_ORIGINALS') == '1' or os.environ.get('GITHUB_HEAD_REF') == 'enhancement/smooth-scroll-20260924'
     protected = {
         'styles.css': '78de70e559ed0193af7bb091509300831241fbbf',
         'script.js': 'e3efd6f9e0ac3138131c013cb231400f196e7e56',
@@ -54,8 +73,9 @@ try:
         'favicon-aa.svg': '31eec0a1d800a3eaffb294f7f17e9be05017e669',
         'favicon.png': '6bc36f6898481d95ae792f48cd47c3d4f81ab747'
     }
-    for filename, expected in protected.items():
-        check('Unchanged original file: ' + filename, blob_sha((ROOT/filename).read_bytes()) == expected)
+    if preserve:
+        for filename, expected in protected.items():
+            check('Unchanged original file: ' + filename, blob_sha((ROOT/filename).read_bytes()) == expected)
     html = (ROOT/'index.html').read_text()
     for line in [
         '  <link rel="stylesheet" href="smooth-scroll.css?v=1">\n',
@@ -64,10 +84,14 @@ try:
     ]:
         check('Exactly one integration tag: ' + line.strip(), html.count(line) == 1)
         html = html.replace(line, '')
-    check('Original HTML unchanged except three asset tags', blob_sha(html.encode()) == '49118d92bf5a77e2fa688f886ffa57516b28e591')
+    if preserve:
+        check('Original HTML unchanged except three asset tags', blob_sha(html.encode()) == '49118d92bf5a77e2fa688f886ffa57516b28e591')
+    source = OUT/'source'; source.mkdir(exist_ok=True)
+    for filename in ['index.html','styles.css','script.js','smooth-scroll.js','smooth-scroll.css','favicon-aa.svg']:
+        shutil.copyfile(ROOT/filename, source/filename)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=['--no-sandbox'])
-        for name, w, h, touch in [('desktop',1440,900,False),('wide',1920,1080,False),('tablet',768,1024,False),('mobile',390,844,True),('small-mobile',320,740,True)]:
+        for name, w, h, touch in [('small-mobile',320,740,True),('desktop',1440,900,False),('wide',1920,1080,False),('tablet',768,1024,False),('mobile',390,844,True)]:
             context = browser.new_context(viewport={'width':w,'height':h}, is_mobile=touch, has_touch=touch, device_scale_factor=1)
             page = context.new_page()
             errors = []
@@ -82,6 +106,8 @@ try:
             check(name + ': original section count', page.locator('main > section[id]').count() == 7)
             check(name + ': no horizontal overflow', overflow(page))
             check(name + ': original black background', page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(0, 0, 0)')
+            if w == 320:
+                REPORT['small_before_screenshot'] = nav_diagnostics(page)
             page.screenshot(path=str(OUT/(name+'-hero.png')))
             if not touch:
                 check(name + ': real Lenis loaded', page.evaluate('typeof window.Lenis === "function"'))
@@ -111,27 +137,21 @@ try:
             check(name + ': active nav preserved', page.locator('#primary-navigation a[href="#projects"]').evaluate('(e)=>e.classList.contains("active")'))
             if not touch:
                 check(name + ': anchor transfers keyboard focus', page.evaluate('document.activeElement.id') == 'projects')
-            page.go_back(wait_until='domcontentloaded')
-            page.wait_for_timeout(1200)
+            page.go_back(wait_until='domcontentloaded'); page.wait_for_timeout(1200)
             check(name + ': browser Back restores section', page.evaluate('location.hash') == '#about' and abs(page.locator('#about').bounding_box()['y'] - (88 if w<=900 else 96)) < 8)
-            page.go_forward(wait_until='domcontentloaded')
-            page.wait_for_timeout(1200)
+            page.go_forward(wait_until='domcontentloaded'); page.wait_for_timeout(1200)
             check(name + ': browser Forward restores section', page.evaluate('location.hash') == '#projects')
             page.screenshot(path=str(OUT/(name+'-projects.png')))
             if name == 'desktop':
                 old_y = page.evaluate('scrollY')
-                page.keyboard.press('PageDown')
-                page.wait_for_timeout(900)
+                page.keyboard.press('PageDown'); page.wait_for_timeout(900)
                 check('Desktop: PageDown remains usable', page.evaluate('scrollY') > old_y + 100)
-                page.keyboard.press('Home')
-                page.wait_for_timeout(900)
+                page.keyboard.press('Home'); page.wait_for_timeout(900)
                 check('Desktop: Home remains usable', page.evaluate('scrollY') < 5)
                 page.evaluate('document.activeElement.blur()')
-                page.mouse.wheel(0, 200)
-                page.wait_for_timeout(1200)
+                page.mouse.wheel(0, 200); page.wait_for_timeout(1200)
                 check('Desktop: wheel still works after keyboard', page.evaluate('scrollY') > 100)
-            page.locator('footer a[href="#home"]').click()
-            page.wait_for_timeout(1800)
+            page.locator('footer a[href="#home"]').click(); page.wait_for_timeout(1800)
             check(name + ': back to top works', page.evaluate('scrollY') < 5)
             check(name + ': original background retained', page.locator('#network-background').is_visible())
             check(name + ': no unhandled JavaScript errors', not errors, errors)
@@ -166,7 +186,7 @@ try:
         check('No JavaScript: native navigation still works', page.evaluate('location.hash') == '#projects' and page.evaluate('scrollY') > 100)
         check('No JavaScript: no new overflow', overflow(page))
         pdf = context.request.get(BASE + 'abdul-azeez-resume.pdf')
-        check('Resume URL still serves original PDF', pdf.ok and blob_sha(pdf.body()) == protected['abdul-azeez-resume.pdf'])
+        check('Resume URL serves the repository PDF', pdf.ok and pdf.body() == (ROOT/'abdul-azeez-resume.pdf').read_bytes())
         context.close()
         context = browser.new_context(viewport={'width':1440,'height':900})
         page = context.new_page(); page.goto(BASE+'#projects', wait_until='domcontentloaded'); ready(page)
