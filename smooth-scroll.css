@@ -1,4 +1,11 @@
-/* Lenis integration only: no changes to the portfolio's visual design. */
+/* Scroll integration only: preserve the portfolio's original visual styling. */
+/* The original body already hides horizontal overflow. Contain it at the root
+   too, so long section headings cannot widen a phone's layout viewport and
+   move the fixed navigation outside the screen. This does not create a new
+   scroll container or change the content layout. */
+html {
+  overflow-x: clip;
+}
 html.lenis,
 html.lenis body {
   height: auto;
