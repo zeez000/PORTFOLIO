@@ -1,26 +1,31 @@
-/* Scrolling only. Matches Portfolio 2's Lenis tuning without importing its design. */
+/* Smooth scrolling matched to Portfolio 2: GSAP ticker drives Lenis and ScrollTrigger. */
 (() => {
   'use strict';
+
   const finePointer = matchMedia('(pointer: fine)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const state = window.portfolioScroll = { ready: false, mode: 'native', lerp: 0.085 };
-  let instance = null;
-  let frame = 0;
+  const hasGsap = Boolean(window.gsap && window.ScrollTrigger);
+  if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+
+  const state = window.portfolioScroll = {
+    ready: false,
+    mode: 'native',
+    lerp: 0.085,
+    driver: hasGsap ? 'gsap' : 'native'
+  };
+
+  let lenis = null;
+  let lenisTick = null;
   let locationFrame = 0;
 
   function destroy() {
-    cancelAnimationFrame(frame);
     cancelAnimationFrame(locationFrame);
-    frame = locationFrame = 0;
-    if (instance) instance.destroy();
-    instance = null;
+    locationFrame = 0;
+    if (lenisTick && hasGsap) gsap.ticker.remove(lenisTick);
+    lenisTick = null;
+    if (lenis) lenis.destroy();
+    lenis = null;
     state.mode = 'native';
-  }
-
-  function tick(time) {
-    if (!instance || document.hidden) return;
-    instance.raf(time);
-    frame = requestAnimationFrame(tick);
   }
 
   function hashTarget(hash) {
@@ -42,62 +47,79 @@
     if (temporary) target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
   }
 
-  // Use native history restoration, then synchronize the scroll engine.
   function syncLocation() {
     cancelAnimationFrame(locationFrame);
     locationFrame = requestAnimationFrame(() => {
-      if (!instance) return;
-      instance.resize();
+      if (!lenis) return;
+      lenis.resize();
       const target = hashTarget(location.hash);
-      instance.scrollTo(target ? destination(target) : scrollY, { immediate: true });
+      lenis.scrollTo(target ? destination(target) : scrollY, { immediate: true });
+      if (hasGsap) ScrollTrigger.update();
     });
   }
 
   function setup() {
     destroy();
-    if (reducedMotion.matches || !finePointer.matches || typeof window.Lenis !== 'function') {
+
+    if (
+      reducedMotion.matches ||
+      !finePointer.matches ||
+      typeof window.Lenis !== 'function' ||
+      !hasGsap
+    ) {
       state.ready = true;
+      state.driver = hasGsap ? 'gsap' : 'native';
       return;
     }
+
     try {
-      instance = new window.Lenis({
+      lenis = new window.Lenis({
         lerp: 0.085,
         smoothWheel: true,
         syncTouch: false,
-        anchors: false,
-        autoRaf: false,
-        prevent: node => node.matches?.('textarea, select, [data-lenis-prevent], dialog[open]') || false
+        anchors: false
       });
+
+      lenis.on('scroll', ScrollTrigger.update);
+
+      lenisTick = time => lenis.raf(time * 1000);
+      gsap.ticker.add(lenisTick);
+      gsap.ticker.lagSmoothing(0);
+
       state.mode = 'smooth';
-      if (!document.hidden) frame = requestAnimationFrame(tick);
+      state.driver = 'gsap';
+      ScrollTrigger.refresh();
     } catch (error) {
       destroy();
       console.warn('Smooth scrolling unavailable; native scrolling remains enabled.', error);
     }
+
     state.ready = true;
   }
 
   document.addEventListener('click', event => {
-    if (!instance || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!lenis || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const anchor = event.target.closest?.('a[href^="#"]');
     if (!anchor || anchor.hasAttribute('download') || (anchor.target && anchor.target !== '_self')) return;
+
     const target = hashTarget(anchor.hash);
     if (!target) return;
+
     event.preventDefault();
     if (location.hash !== anchor.hash) history.pushState(null, '', anchor.hash);
-    instance.scrollTo(destination(target), {
+
+    lenis.scrollTo(destination(target), {
       duration: 1.1,
       immediate: anchor.classList.contains('skip-link'),
       onComplete: () => focusTarget(target)
     });
   });
 
-  // Keyboard scrolling stays native and can interrupt an in-flight animation.
   document.addEventListener('keydown', event => {
-    if (!instance || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (!lenis || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
     if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) {
-      instance.scrollTo(instance.actualScroll, { immediate: true });
+      lenis.scrollTo(lenis.actualScroll, { immediate: true });
     }
   });
 
@@ -107,14 +129,16 @@
   addEventListener('hashchange', syncLocation);
   addEventListener('pagehide', destroy);
   addEventListener('pageshow', event => { if (event.persisted) setup(); });
+
   document.addEventListener('visibilitychange', () => {
-    cancelAnimationFrame(frame);
-    if (!instance || document.hidden) return;
-    instance.resize();
-    instance.scrollTo(scrollY, { immediate: true });
-    frame = requestAnimationFrame(tick);
+    if (!lenis || document.hidden) return;
+    lenis.resize();
+    lenis.scrollTo(scrollY, { immediate: true });
+    if (hasGsap) ScrollTrigger.refresh();
   });
+
   setup();
+
   if (location.hash) {
     if (document.readyState === 'complete') syncLocation();
     else addEventListener('load', syncLocation, { once: true });
