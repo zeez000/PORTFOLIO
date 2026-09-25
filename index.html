@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#050712">
   <meta name="description" content="Abdul Azeez — DevOps, cloud and infrastructure engineer building practical systems with Linux, containers, automation and AWS.">
   <meta property="og:title" content="Abdul Azeez | DevOps · Cloud · Infrastructure">
   <meta property="og:description" content="Selected infrastructure, containerization and automation work by Abdul Azeez.">
@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="smooth-scroll.css?v=1">
+  <link rel="stylesheet" href="aurora.css?v=1">
   <link rel="icon" type="image/svg+xml" href="favicon-aa.svg">
 </head>
 <body>
@@ -22,6 +23,7 @@
   <canvas id="network-background" aria-hidden="true"></canvas>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
+  <button class="aurora-toggle" type="button" aria-pressed="false" aria-label="Pause Silk Aurora background"><span class="aurora-toggle-icon" aria-hidden="true">Ⅱ</span><span class="aurora-toggle-label">Motion on</span></button>
 
   <header class="nav" data-nav>
     <a class="logo" href="#home" aria-label="Abdul Azeez home">AA<span>.</span></a>
@@ -115,9 +117,9 @@
         <article class="project-card">
           <div class="card-top"><span class="status">AUTOMATION</span><span class="project-index">02</span></div>
           <h3>CI/CD Pipeline Practice</h3>
-          <p>Hands-on work with Git and GitHub, delivery automation, CI/CD concepts and repeatable build and deployment workflows.</p>
+          <p>A compact GitHub Actions practice project that builds a Docker image from a small Nginx-based app, keeping the delivery workflow easy to inspect.</p>
           <ul class="tags"><li>Git</li><li>GitHub</li><li>CI/CD</li><li>Automation</li></ul>
-          <a class="project-link" href="https://github.com/zeez000/devops-cicd-project" target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a>
+          <a class="project-link" href="https://github.com/zeez000/devops-cicd-project-ubuntu" target="_blank" rel="noreferrer">View CI/CD repository <span aria-hidden="true">↗</span></a>
         </article>
         <article class="project-card">
           <div class="card-top"><span class="status muted">LAB</span><span class="project-index">03</span></div>
@@ -131,12 +133,14 @@
           <h3>Linux Development &amp; Git Workflow</h3>
           <p>Terminal-based practice covering Git staging, pull/push workflows, file permissions, packages, processes and CLI troubleshooting.</p>
           <ul class="tags"><li>Ubuntu</li><li>Git</li><li>GitHub</li><li>Bash</li></ul>
+          <a class="project-link related-link" href="https://github.com/zeez000/devops-cicd-project-ubuntu" target="_blank" rel="noreferrer">Related workflow repository <span aria-hidden="true">↗</span></a>
         </article>
         <article class="project-card">
           <div class="card-top"><span class="status muted">ENVIRONMENT</span><span class="project-index">05</span></div>
           <h3>Docker &amp; DevOps Environment</h3>
           <p>Practice with Dockerfiles, images, running containers, port mapping, deployment fundamentals and container troubleshooting.</p>
           <ul class="tags"><li>Docker</li><li>Linux</li><li>GitHub</li></ul>
+          <a class="project-link related-link" href="https://github.com/zeez000/devops-cicd-project-ubuntu" target="_blank" rel="noreferrer">Related Docker repository <span aria-hidden="true">↗</span></a>
         </article>
       </div>
     </section>
@@ -177,5 +181,9 @@
   <script src="script.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
   <script defer src="smooth-scroll.js?v=1"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script defer src="aurora.js?v=1"></script>
+  <script defer src="text-flow.js?v=1"></script>
 </body>
 </html>
