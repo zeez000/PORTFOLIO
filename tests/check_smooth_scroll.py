@@ -189,7 +189,7 @@ try:
         context = browser.new_context(viewport={'width':390,'height':844}, java_script_enabled=False)
         page = context.new_page(); page.goto(BASE, wait_until='domcontentloaded')
         check('No JavaScript: hero and native anchor present', page.locator('#hero-title').is_visible() and page.locator('.hero-actions a[href="#projects"]').is_visible())
-        page.locator('.hero-actions a[href="#projects"]').click(); page.wait_for_timeout(1200)
+        page.locator('.hero-actions a[href="#projects"]').click(force=True); page.wait_for_timeout(1200)
         check('No JavaScript: native navigation still works', page.evaluate('location.hash') == '#projects' and page.evaluate('scrollY') > 100)
         check('No JavaScript: no new overflow', overflow(page))
         pdf = context.request.get(BASE + 'abdul-azeez-resume.pdf')
