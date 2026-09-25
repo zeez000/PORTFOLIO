@@ -27,6 +27,8 @@ jobs:
         run: |
           node --check script.js
           node --check smooth-scroll.js
+          node --check aurora.js
+          node --check text-flow.js
           python tests/check_smooth_scroll.py
       - name: Verify published scrolling after deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -35,15 +37,24 @@ jobs:
         run: |
           python - <<'PY'
           import os, pathlib, time, urllib.request
-          expected = pathlib.Path('smooth-scroll.js').read_bytes()
-          url = os.environ['BASE_URL'] + 'smooth-scroll.js?verify=' + os.environ['GITHUB_SHA']
+          expected = {
+              'smooth-scroll.js': pathlib.Path('smooth-scroll.js').read_bytes(),
+              'aurora.js': pathlib.Path('aurora.js').read_bytes(),
+              'text-flow.js': pathlib.Path('text-flow.js').read_bytes(),
+          }
           for attempt in range(30):
               try:
-                  request = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
-                  with urllib.request.urlopen(request, timeout=10) as response:
-                      if response.read() == expected:
-                          print('Published scroll module matches tested commit')
-                          break
+                  matched = True
+                  for name, content in expected.items():
+                      url = os.environ['BASE_URL'] + name + '?verify=' + os.environ['GITHUB_SHA']
+                      request = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
+                      with urllib.request.urlopen(request, timeout=10) as response:
+                          if response.read() != content:
+                              matched = False
+                              break
+                  if matched:
+                      print('Published scroll, Aurora, and text-flow modules match tested commit')
+                      break
               except Exception as error:
                   print('Deployment check:', str(error))
               time.sleep(3)
