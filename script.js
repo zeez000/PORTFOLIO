@@ -28,21 +28,6 @@
   addEventListener("scroll", updateScroll, { passive: true });
   updateScroll();
 
-  const reveals = document.querySelectorAll(".reveal");
-  if (reducedMotion || !("IntersectionObserver" in window)) {
-    reveals.forEach(item => item.classList.add("visible"));
-  } else {
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: .12 });
-    reveals.forEach(item => revealObserver.observe(item));
-  }
-
   const sections = [...document.querySelectorAll("main section[id]")];
   const activateNav = () => {
     const current = sections.reduce((active, section) =>
