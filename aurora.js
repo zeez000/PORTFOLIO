@@ -9,7 +9,7 @@
   const label=toggle?.querySelector('.aurora-toggle-label');
   const icon=toggle?.querySelector('.aurora-toggle-icon');
   let paused=reduced.matches,raf=0,last=0,w=0,h=0,dpr=1,phase=0;
-  let mx=.68,my=.38,tx=.68,ty=.38,lowPower=false;
+  let mx=.68,my=.38,tx=.68,ty=.38,lowPower=false,ribbonGradient=null;
   const state=window.silkAurora={ready:false,paused,quality:'full',fps:60};
 
   function resize(){
@@ -21,6 +21,12 @@
     canvas.height=Math.max(1,Math.floor(h*dpr));
     canvas.style.width=w+'px'; canvas.style.height=h+'px';
     state.quality=lowPower?'reduced':'full';
+    ribbonGradient=ctx.createLinearGradient(0,0,w,0);
+    ribbonGradient.addColorStop(0,'rgba(26,70,165,0)');
+    ribbonGradient.addColorStop(.28,'rgba(39,126,255,.42)');
+    ribbonGradient.addColorStop(.53,'rgba(94,94,255,.74)');
+    ribbonGradient.addColorStop(.76,'rgba(151,78,246,.72)');
+    ribbonGradient.addColorStop(1,'rgba(214,84,230,.05)');
     render();
   }
 
@@ -47,13 +53,7 @@
       const y=h*(.9-p*.66)+wave+offset*h*.07+(mx-.5)*18;
       if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
     }
-    const g=ctx.createLinearGradient(0,0,w,0);
-    g.addColorStop(0,'rgba(26,70,165,0)');
-    g.addColorStop(.28,'rgba(39,126,255,.42)');
-    g.addColorStop(.53,'rgba(94,94,255,.74)');
-    g.addColorStop(.76,'rgba(151,78,246,.72)');
-    g.addColorStop(1,'rgba(214,84,230,.05)');
-    ctx.strokeStyle=g;
+    ctx.strokeStyle=ribbonGradient;
     ctx.globalAlpha=alpha;
     ctx.lineWidth=Math.max(1,h*widthScale);
     ctx.stroke();
