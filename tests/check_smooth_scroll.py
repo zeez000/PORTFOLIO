@@ -80,7 +80,7 @@ try:
     for line in [
         '  <link rel="stylesheet" href="smooth-scroll.css?v=1">\n',
         '  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>\n',
-        '  <script defer src="smooth-scroll.js?v=1"></script>\n'
+        '  <script defer src="smooth-scroll.js?v=2"></script>\n'
     ]:
         check('Exactly one integration tag: ' + line.strip(), html.count(line) == 1)
         html = html.replace(line, '')
@@ -114,6 +114,7 @@ try:
             if not touch:
                 check(name + ': real Lenis loaded', page.evaluate('typeof window.Lenis === "function"'))
                 check(name + ': same Portfolio 2 easing', state['lerp'] == 0.085)
+                check(name + ': Portfolio 2 GSAP ticker driver', state.get('driver') == 'gsap', state)
                 page.mouse.move(w/2, h/2)
                 page.evaluate('''() => {
                     window.scrollSamples = [];
