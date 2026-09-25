@@ -9,7 +9,7 @@ body{background:var(--aurora-bg)}
 .aurora-toggle{position:fixed;right:22px;bottom:22px;z-index:95;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.13);background:rgba(5,7,18,.6);backdrop-filter:blur(14px);color:#aab3ca;border-radius:999px;padding:10px 13px;font:500 .6rem var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
 .aurora-toggle:hover{color:var(--white);border-color:rgba(255,255,255,.28)}
 .related-link{border-bottom-color:rgba(92,225,255,.45)}
-.flow-word{display:inline-block;will-change:transform,opacity}
-.section-head,.project-intro,.about-copy,.terminal,.skill-card,.project-card,.timeline li,.resume-box,.contact-row{will-change:transform,opacity}
+.reveal{opacity:1;transform:none;transition:none}
+.section-head,.project-intro,.about-layout,.skill-groups,.projects,.timeline,.resume-box,.contact-list,.skill-card,.project-card,.timeline li,.contact-row{will-change:transform,opacity}
 @media(max-width:600px){.aurora-toggle{right:12px;bottom:12px;padding:9px 11px}.aurora-toggle-label{display:none}}
 @media(prefers-reduced-motion:reduce){.aurora-toggle{display:none}#network-background{opacity:.45}}
