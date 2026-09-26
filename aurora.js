@@ -41,6 +41,12 @@
     radial.addColorStop(.45,'rgba(22,35,96,.15)');
     radial.addColorStop(1,'rgba(5,7,18,0)');
     ctx.fillStyle=radial;ctx.fillRect(0,0,w,h);
+
+    const leftGlow=ctx.createRadialGradient(w*.05,h*.18,0,w*.05,h*.18,Math.max(w,h)*.58);
+    leftGlow.addColorStop(0,'rgba(83,72,210,.24)');
+    leftGlow.addColorStop(.34,'rgba(38,88,210,.13)');
+    leftGlow.addColorStop(1,'rgba(5,7,18,0)');
+    ctx.fillStyle=leftGlow;ctx.fillRect(0,0,w,h);
   }
 
   function ribbon(offset,widthScale,alpha,t){
@@ -65,6 +71,10 @@
     ctx.globalCompositeOperation='screen';
     const drift=(my-.5)*18;
     ctx.translate((mx-.5)*16,drift);
+    ctx.save();
+    ctx.translate(-w*.16,h*.02);
+    ribbon(-.35,.0015,.045,phase+.7);
+    ctx.restore();
     if(!lowPower){ctx.filter='blur(16px)';ribbon(-.7,.038,.13,phase);ribbon(.2,.034,.11,phase);ctx.filter='none';}
     const strands=lowPower?8:14;
     for(let b=0;b<3;b++){
@@ -76,8 +86,9 @@
     }
     ctx.restore();
     const veil=ctx.createLinearGradient(0,0,w,0);
-    veil.addColorStop(0,'rgba(5,7,18,.74)');
-    veil.addColorStop(.38,'rgba(5,7,18,.38)');
+    veil.addColorStop(0,'rgba(5,7,18,.52)');
+    veil.addColorStop(.22,'rgba(5,7,18,.42)');
+    veil.addColorStop(.45,'rgba(5,7,18,.28)');
     veil.addColorStop(.72,'rgba(5,7,18,.08)');
     veil.addColorStop(1,'rgba(5,7,18,.02)');
     ctx.fillStyle=veil;ctx.fillRect(0,0,w,h);
