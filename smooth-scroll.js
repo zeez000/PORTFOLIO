@@ -10,7 +10,7 @@
   const state = window.portfolioScroll = {
     ready: false,
     mode: 'native',
-    lerp: 0.085,
+    lerp: 0.14,
     driver: hasGsap ? 'gsap' : 'native'
   };
 
@@ -74,7 +74,7 @@
 
     try {
       lenis = new window.Lenis({
-        lerp: 0.085,
+        lerp: 0.14,
         smoothWheel: true,
         syncTouch: false,
         anchors: false
@@ -109,7 +109,7 @@
     if (location.hash !== anchor.hash) history.pushState(null, '', anchor.hash);
 
     lenis.scrollTo(destination(target), {
-      duration: 1.1,
+      duration: 0.9,
       immediate: anchor.classList.contains('skip-link'),
       onComplete: () => focusTarget(target)
     });
