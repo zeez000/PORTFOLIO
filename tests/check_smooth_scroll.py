@@ -113,7 +113,7 @@ try:
             page.screenshot(path=str(OUT/(name+'-hero.png')))
             if not touch:
                 check(name + ': real Lenis loaded', page.evaluate('typeof window.Lenis === "function"'))
-                check(name + ': same Portfolio 2 easing', state['lerp'] == 0.085)
+                check(name + ': responsive smooth-scroll easing', state['lerp'] == 0.14)
                 check(name + ': Portfolio 2 GSAP ticker driver', state.get('driver') == 'gsap', state)
                 page.mouse.move(w/2, h/2)
                 page.evaluate('''() => {
@@ -124,8 +124,12 @@ try:
                     }
                     requestAnimationFrame(sample);
                 }''')
+                start_y = page.evaluate('scrollY')
                 page.mouse.wheel(0, 620)
-                page.wait_for_timeout(1700)
+                page.wait_for_timeout(120)
+                quick_y = page.evaluate('scrollY')
+                check(name + ': wheel responds quickly', quick_y > start_y + 55, {'start': start_y, 'after120ms': quick_y})
+                page.wait_for_timeout(1580)
                 samples = page.evaluate('window.scrollSamples')
                 check(name + ': wheel moves through intermediate positions', len(set(samples)) > 6 and max(samples) > 100, samples)
                 check(name + ': wheel reaches expected destination', abs(page.evaluate('scrollY') - 620) < 8)
