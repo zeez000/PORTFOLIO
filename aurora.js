@@ -15,8 +15,8 @@
   function resize(){
     w=innerWidth;h=innerHeight;
     const area=w*h;
-    lowPower=area>2600000 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4);
-    dpr=Math.min(devicePixelRatio||1,lowPower?1:1.35);
+    lowPower=area>1800000 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=6);
+    dpr=Math.min(devicePixelRatio||1,lowPower?0.9:1.15);
     canvas.width=Math.max(1,Math.floor(w*dpr));
     canvas.height=Math.max(1,Math.floor(h*dpr));
     canvas.style.width=w+'px'; canvas.style.height=h+'px';
@@ -44,7 +44,7 @@
   }
 
   function ribbon(offset,widthScale,alpha,t){
-    const points=lowPower?42:64;
+    const points=lowPower?30:44;
     ctx.beginPath();
     for(let i=0;i<=points;i++){
       const p=i/points;
@@ -65,8 +65,8 @@
     ctx.globalCompositeOperation='screen';
     const drift=(my-.5)*18;
     ctx.translate((mx-.5)*16,drift);
-    if(!lowPower){ctx.filter='blur(22px)';ribbon(-.7,.042,.16,phase);ribbon(.2,.038,.13,phase);ctx.filter='none';}
-    const strands=lowPower?12:22;
+    if(!lowPower){ctx.filter='blur(16px)';ribbon(-.7,.038,.13,phase);ribbon(.2,.034,.11,phase);ctx.filter='none';}
+    const strands=lowPower?8:14;
     for(let b=0;b<3;b++){
       for(let i=0;i<strands;i++){
         const z=(i/(strands-1)-.5)*2;
@@ -88,7 +88,7 @@
     if(paused||document.hidden||reduced.matches) return;
     const dt=last?Math.min((now-last)/1000,.05):0;
     last=now;
-    phase+=dt*.55;
+    phase+=dt*.48;
     const ease=1-Math.exp(-dt*3.8);
     mx+=(tx-mx)*ease;my+=(ty-my)*ease;
     render();
